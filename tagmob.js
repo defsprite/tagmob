@@ -347,7 +347,7 @@ var tagmob = (function() {
   function drawBboxes(word, g) {
     var box;
     g.save();
-    g.beginPath();
+    //g.beginPath();
     //g.rect(-2, -2, 4, 4);
     g.fill();
     for (var b = word.bboxes.length; b--;) {
@@ -360,7 +360,7 @@ var tagmob = (function() {
       g.restore();
     }
     g.stroke();
-    g.closePath();
+    //g.closePath();
     g.restore();
   }
 
@@ -392,7 +392,6 @@ var tagmob = (function() {
       g.fill();
       g.translate(jumps[++j], 0);
     }
-
     g.closePath();
     g.restore();
   }
@@ -443,9 +442,7 @@ var tagmob = (function() {
         color: "#000000",
         insets: {top: 0, left: 0, bottom: 0, right: 0}
       };
-    console.log(fonts);
     font = fonts[options.font || defaults.font];
-    console.log(font);
 
     var width = canvas.width,
       height = canvas.height,
@@ -458,11 +455,11 @@ var tagmob = (function() {
       minScale = minHeightPx / font.height,
       scale = maxScale,
       rProb = options.rotationProbability || (height / (width + height)),
-      rOrient = options.rotationProbability == 'left' ? 1 : -1,
+      rOrient = options.rotationOrientation == 'left' ? 1 : -1,
       minCount = words[0].count || defaults.minCount,
       maxCount = words[words.length - 1].count || defaults.maxCount,
       color = options.color || defaults.color,
-      hoverColor = options.hoverColor || color,
+      hoverColor = options.hoverColor,
       unitToScale = buildScalingFunction(minCount, maxCount, 1.0, .1),
       onSelect = options.onselect || function() {},
       onUnselect = options.onunselect || function() {},
@@ -472,10 +469,6 @@ var tagmob = (function() {
       globalBbox = {min_x: 1000000, min_y: 1000000, max_x: -1000000, max_y: -1000000};
 
     w = [];
-
-
-    console.log(options);
-    console.log(color);
 
     gContext.translate(offsetX, offsetY);
     gContext.save();
@@ -490,9 +483,7 @@ var tagmob = (function() {
       //renderWord(w[i], gContext);
     }
 
-    console.log(globalBbox);
-
-    var scaleTo = mmax(width/(globalBbox.max_x - globalBbox.min_x), height/(globalBbox.max_y - globalBbox.min_y));
+    var scaleTo = mmin(width/(globalBbox.max_x - globalBbox.min_x), height/(globalBbox.max_y - globalBbox.min_y));
 
     for (i = 0; i < words.length; i++) {
       scaleWord(w[i], scaleTo);
@@ -512,7 +503,8 @@ var tagmob = (function() {
     };
 
     canvas.onmousemove = function(event) {
-      var x = event.clientX - canvas.offsetLeft - offsetX, y = event.clientY - canvas.offsetTop - offsetY;
+      var x = document.body.scrollLeft + document.documentElement.scrollLeft + event.clientX - canvas.offsetLeft - offsetX,
+        y = document.body.scrollTop + document.documentElement.scrollTop + event.clientY - canvas.offsetTop - offsetY;
       for (var i = 0; i < w.length; i++) {
         var over = false;
         // if (w[i].selected) continue;
@@ -533,7 +525,7 @@ var tagmob = (function() {
     };
 
     function mouseInHandler(word) {
-      renderWord(word, gContext, hoverColor);
+      if(hoverColor) renderWord(word, gContext, hoverColor);
       onMouseover(word);
     }
 
