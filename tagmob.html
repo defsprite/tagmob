@@ -1,0 +1,140 @@
+<html>
+<head>
+  <title>wordcloud.js example page</title>
+  <script src="lib/jquery-1.4.2.min.js" type="text/javascript"></script>
+  <script src="tagmob.js" type="text/javascript"></script>
+  <script src="fonts/OldSansBlack_500.font.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(function() {
+      var words = [];
+
+      $("#wordcloud li").each(function(index, elem) {
+        var elem = $(elem);
+        words.push({word: elem.text() , count: elem.attr('data-count') });
+      });
+      $("#wordcloud").hide();
+
+      console.log(words.length);
+      var canvas = document.createElement('canvas')
+      canvas.width = 1200;
+      canvas.height = 800;
+      document.body.appendChild(canvas);
+      console.log(canvas);
+      var options = {hoverColor: "#00FF00"}
+      wordCloudJS.test(words, canvas, options);
+    });
+
+  </script>
+</head>
+<body>
+<ol id="wordcloud">
+  <li data-count="150">Ruby</li>
+  <li data-count="130">Rails</li>
+  <li data-count="90">user</li>
+  <li data-count="80">restart</li>
+  <li data-count="80">latestrelease</li>
+  <li data-count="80">nfs</li>
+  <li data-count="80">ln</li>
+  <li data-count="80">currentpath</li>
+  <li data-count="60">runwithresult</li>
+  <li data-count="60">app</li>
+  <li data-count="60">res</li>
+  <li data-count="60">repositorycache</li>
+  <li data-count="60">usergroup</li>
+  <li data-count="40">bundle</li>
+  <li data-count="40">symlink</li>
+  <li data-count="40">||</li>
+  <li data-count="40">rm</li>
+  <li data-count="40">node</li>
+  <li data-count="40">releasetolink</li>
+  <li data-count="30">mkdir</li>
+  <li data-count="30">RAILSENV</li>
+  <li data-count="30">deployto</li>
+  <li data-count="30">chown</li>
+  <li data-count="30">runwithresultchown</li>
+  <li data-count="30">migrate</li>
+  <li data-count="30">releasepath</li>
+  <li data-count="30">deploy</li>
+  <li data-count="30">runwithresultcd</li>
+  <li data-count="30">MERBENV</li>
+  <li data-count="30">RACKENV</li>
+  <li data-count="20">lrpt</li>
+  <li data-count="20">releasetolinklog</li>
+  <li data-count="20">releasepath</li>
+  <li data-count="20">cmds</li>
+  <li data-count="20">release</li>
+  <li data-count="20">false</li>
+  <li data-count="20">nmigrationcommand</li>
+  <li data-count="20">gem</li>
+  <li data-count="20">excludegit</li>
+  <li data-count="20">revision</li>
+  <li data-count="10">class</li>
+  <li data-count="10">sudo</li>
+  <li data-count="10">releasetolinkpublicsystem</li>
+  <li data-count="10">rsync</li>
+  <li data-count="10">cmd</li>
+  <li data-count="10">40</li>
+  <li data-count="10">optsmigrationcommand</li>
+  <li data-count="10">raiseEyDeployFailure</li>
+  <li data-count="10">rf</li>
+  <li data-count="10">require</li>
+  <li data-count="7">authorization</li>
+  <li data-count="6">access</li>
+  <li data-count="5">users</li>
+  <li data-count="4">roles</li>
+  <li data-count="4">plugin</li>
+ <!--
+  <li data-count="4">plugins</li>
+  <li data-count="3">complex</li>
+  <li data-count="3">rules</li>
+  <li data-count="3">requirements</li>
+  <li data-count="3">object</li>
+  <li data-count="2">restricting</li>
+  <li data-count="2">options</li>
+  <li data-count="2">user</li>
+  <li data-count="2">won't</li>
+  <li data-count="2">role</li>
+  <li data-count="2">control</li>
+  <li data-count="2">lists</li>
+  <li data-count="2">complexity</li>
+  <li data-count="2">helps</li>
+  <li data-count="2">solution</li>
+  <li data-count="2">contrast</li>
+  <li data-count="2">roughly</li>
+  <li data-count="2">simple</li>
+  <li data-count="2">Privileges</li>
+  <li data-count="2">Rails</li>
+  <li data-count="2">declarative</li>
+  <li data-count="2">common</li>
+  <li data-count="1">abstraction</li>
+  <li data-count="1">ACL</li>
+  <li data-count="1">overview</li>
+  <li data-count="1">allowed</li>
+  <li data-count="1">authentication</li>
+  <li data-count="1">modified</li>
+  <li data-count="1">define</li>
+  <li data-count="1">missing</li>
+  <li data-count="1">views</li>
+  <li data-count="1">project</li>
+  <li data-count="1">list</li>
+  <li data-count="1">view</li>
+  <li data-count="1">difficult</li>
+  <li data-count="1">table</li>
+  <li data-count="1">multiple</li>
+  <li data-count="1">examine</li>
+  <li data-count="1">size</li>
+  <li data-count="1">I'm</li>
+  <li data-count="1">grant</li>
+  <li data-count="1">local</li>
+  <li data-count="1">objects</li>
+  <li data-count="1">developer's</li>
+  <li data-count="1">rolerequirement</li>
+  <li data-count="1">enforced</li>
+-->
+</ol>
+<div>
+  <div id="example" width="800" height="800">
+  </div>
+</div>
+</body>
+</html>
