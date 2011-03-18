@@ -378,7 +378,7 @@ var tagmob = (function() {
     } else {
       g.translate(word.tx, word.ty);
     }
-    g.scale(word.scale, word.scale);
+    g.scale(word.scale.toFixed(4), word.scale.toFixed(4));
     g.beginPath();
     while (chr = chars[++i]) {
       glyph = glyphs[chars[i]] || font.missingGlyph;
@@ -408,8 +408,8 @@ var tagmob = (function() {
       // a simple linear spiral written as polar
       r = a * phi;
       //r = a * Math.pow(Math.E, b * phi);
-      x = r * Math.cos(phi);
-      y = r * Math.sin(phi);
+      x = Math.round(r * Math.cos(phi));
+      y = Math.round(r * Math.sin(phi));
       strokes++;
     }
     moveWord(words[index], tx + x, ty + y);
@@ -435,8 +435,7 @@ var tagmob = (function() {
         spiral: {
           a: 2
         },
-        maxFontHeight: 200,
-        minFontHeight: 15,
+
         rotationProbability: 0.5,
         rotationOrientation: 'right',
         color: "#000000",
@@ -460,7 +459,7 @@ var tagmob = (function() {
       maxCount = words[words.length - 1].count || defaults.maxCount,
       color = options.color || defaults.color,
       hoverColor = options.hoverColor,
-      unitToScale = buildScalingFunction(minCount, maxCount, 1.0, .1),
+      unitToScale = buildScalingFunction(minCount, maxCount, maxScale, minScale),
       onSelect = options.onselect || function() {},
       onUnselect = options.onunselect || function() {},
       onMouseover = options.onmouseover || function() {},
@@ -474,13 +473,12 @@ var tagmob = (function() {
     gContext.save();
     for (var i = 0; i < words.length; i++) {
       scale = unitToScale(words[i].count);
-      w.push(initializeWord(words[i].word, scale > maxScale ? maxScale : scale, Math.random() < rProb ? rOrient : 0));
+      w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0));
       var xPos = parseInt(i > 0 ? (width / 4 - Math.random() * width / 2) : (w[i].bbox.min_x - w[i].bbox.max_x) / 2);
       moveWord(w[i], xPos, w[i].rotate ? -(w[i].bbox.max_y - w[i].bbox.min_y) / 2 : 0);
       if (i > 0) positionWord(w, i, width + 200, height + 200, gContext);
       mergeBboxes(globalBbox, w[i].bbox);
       if (options.drawBboxes) drawBboxes(w[i], gContext);
-      //renderWord(w[i], gContext);
     }
 
     var scaleTo = mmin(width/(globalBbox.max_x - globalBbox.min_x), height/(globalBbox.max_y - globalBbox.min_y));
@@ -507,19 +505,26 @@ var tagmob = (function() {
         y = document.body.scrollTop + document.documentElement.scrollTop + event.clientY - canvas.offsetTop - offsetY;
       for (var i = 0; i < w.length; i++) {
         var over = false;
-        // if (w[i].selected) continue;
-        if (pointInBbox(x, y, w[i].bbox)) {
-          for (var j = 0; j < w[i].bboxes.length; j++) {
-            over = over || pointInBbox(x, y, w[i].bboxes[j]);
+
+        if(w[i].over) {
+          if(pointInBbox(x, y, w[i].bbox)) {
+            for (var j = 0; j < w[i].bboxes.length; j++) {
+              if (pointInBbox(x, y, w[i].bboxes[j])) continue;
+            }
+          } else {
+            mouseOutHandler(w[i]);
+            w[i].over = false;
           }
-          if (over && !w[i].over) {
+        } else {
+          if(pointInBbox(x, y, w[i].bbox)) {
+            for (var j = 0; j < w[i].bboxes.length; j++) {
+              over = over || pointInBbox(x, y, w[i].bboxes[j]);
+            }
+          }
+          if (over) {
             mouseInHandler(w[i]);
             w[i].over = true;
           }
-        }
-        if (!over && w[i].over) {
-          mouseOutHandler(w[i]);
-          w[i].over = false;
         }
       }
     };
@@ -545,7 +550,30 @@ var tagmob = (function() {
     }
 
     return canvas;
+  },
+
+  api.createFromList = function(element, canvas, options) {
+    var e, items, numItems, count, words = [];
+    if (typeof element == 'string') {
+      e = document.getElementById(element);
+    } else {
+      e = element;
+    }
+
+    if(e) {
+      items = e.getElementsByTagName('li');
+      numItems = items.length;
+      for(var i = 0; i<numItems; i++) {
+        count = items[i].getAttribute('data-count');
+        count = count || (numItems - i);
+        words.push({word: items[i].firstChild.data, count: count});
+      }
+    }
+
+    api.create(words, canvas, options);
   }
+
+
 
   return api;
 })();

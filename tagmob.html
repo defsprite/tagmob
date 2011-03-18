@@ -14,13 +14,16 @@
       }).hide();
 
       var options = {
-        hoverColor: "#00FF00"
+        hoverColor: "#00FF00",
+        maxFontHeight: 200,
+        minFontHeight: 12
       },
       canvas = document.createElement('canvas')
       canvas.width = 800;
       canvas.height = 800;
       document.body.appendChild(canvas);
-      tagmob.create(words, canvas, options);
+      //tagmob.create(words, canvas, options);
+      tagmob.createFromList('wordcloud', canvas, options);
     });
 
   </script>
@@ -82,7 +85,6 @@
   <li data-count="5">users</li>
   <li data-count="4">roles</li>
   <li data-count="4">plugin</li>
- <!--
   <li data-count="4">plugins</li>
   <li data-count="3">complex</li>
   <li data-count="3">rules</li>
@@ -129,7 +131,7 @@
   <li data-count="1">developer's</li>
   <li data-count="1">rolerequirement</li>
   <li data-count="1">enforced</li>
--->
+
 </ol>
 <div>
   <div id="example" width="800" height="800">
