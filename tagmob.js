@@ -393,29 +393,56 @@ var tagmob = (function() {
       }
       g.fillStyle = color || word.color || '#000000';
       g.fill();
-      g.translate(jumps[++j]+0.5, .0);
+      g.translate(jumps[++j], 0);
     }
     g.restore();
   }
 
-  function positionWord(words, index, w, h) {
-    var a = 1.5, r = 0, phi = 0, two_pi = 2 * Math.PI, x = 0, y = 0;
+  function positionWord(words, index, w, h, opts) {
+    var a = opts.a || 1.5, r = 0, phi = 0, x = 0, y = 0;
     var tx = words[index].tx;
     var ty = words[index].ty;
-    var max_rotations = (10 - a) * 10, max_pi = max_rotations * two_pi, phi_delta = 0.5;
+    var phi_delta = opts.phiDelta || 0.5;
+    var min_phi_delta = opts.minPhiDelta || 0.15;
+    var phi_delta_decr = opts.phiDeltaDecr || 0.006;
     var strokes = 0;
     while (index > 0 && x < w && y < h && doWordsIntersectWithTranslation(words, index, tx + x, ty + y)) {
       phi += phi_delta;
-      phi_delta = Math.max(phi_delta - 0.007, 0.2);
+      phi_delta = Math.max(phi_delta - phi_delta_decr, min_phi_delta);
       // a simple linear spiral written as polar
       r = a * phi;
       //r = a * Math.pow(Math.E, b * phi);
-      x = Math.round(r * Math.cos(phi));
-      y = Math.round(r * Math.sin(phi));
+      x = r * Math.cos(phi);
+      y = r * Math.sin(phi);
       strokes++;
     }
     moveWord(words[index], tx + x, ty + y);
-    //console.log("strokes: " + strokes);
+    console.log("strokes: " + strokes);
+  }
+
+  function drawSpiral(w, h, g, opts) {
+    g.save()
+    g.beginPath();
+    var a = opts.a || 1.5, r = 0, phi = 0, x = 0, y = 0;
+    var phi_delta = opts.phiDelta || 0.5;
+    var min_phi_delta = opts.minPhiDelta || 0.15;
+    var phi_delta_decr = opts.phiDeltaDecr || 0.006;
+    var strokes = 0;
+    while (x < w && y < h) {
+      phi += phi_delta;
+      phi_delta = Math.max(phi_delta - phi_delta_decr, min_phi_delta);
+      // a simple linear spiral written as polar
+      r = a * phi;
+      //r = a * Math.pow(Math.E, b * phi);
+      x = r * Math.cos(phi);
+      y = r * Math.sin(phi);
+      g.lineTo(x,y);
+      g.rect(x-1, y-1, 2, 2);
+      strokes++;
+    }
+    g.stroke();
+    console.log("strokes: " + strokes);
+    g.restore();
   }
 
   function buildScalingFunction(minCount, maxCount, minScale, maxScale) {
@@ -436,7 +463,10 @@ var tagmob = (function() {
         maxCount:  100,
         minCount: 0,
         spiral: {
-          a: 2
+          a: 1.3,
+          phiDelta: 0.7,
+          phiDeltaDecr: 0.006,
+          minPhiDelta: 0.05
         },
 
         rotationProbability: 0.5,
@@ -469,6 +499,7 @@ var tagmob = (function() {
       onMouseover = options.onmouseover || function() {},
       onMouseout = options.onmouseout || function() {},
       scaleToFit = !options.dontScaleToFit,
+      spiralOptions = options.spiral || defaults.spiral;
       insets = options.insets || defaults.insets,
       paletteLength = options.palette ? options.palette.length : 0;
       globalBbox = {min_x: 1000000, min_y: 1000000, max_x: -1000000, max_y: -1000000};
@@ -483,7 +514,7 @@ var tagmob = (function() {
       w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0, paletteLength > 0 ? options.palette[i % paletteLength] : color));
       var xPos = parseInt(i > 0 ? (width / 4.0 - Math.random() * width / 2.0) : (w[i].bbox.min_x - w[i].bbox.max_x) / 2.0);
       moveWord(w[i], xPos, w[i].rotate ? -(w[i].bbox.max_y - w[i].bbox.min_y) / 2.0 : 0);
-      if (i > 0) positionWord(w, i, width * 2, height * 2, gContext);
+      if (i > 0) positionWord(w, i, width * 2, height * 2, gContext, spiralOptions);
       mergeBboxes(globalBbox, w[i].bbox);
       if (options.drawBboxes) drawBboxes(w[i], gContext);
     }
@@ -590,13 +621,18 @@ var tagmob = (function() {
     api.create(words, canvas, options);
   }
 
-  api.debug = function(canvas, options) {
-    var words = [];
-    for(var i=0; i<30; i++) {
-      words.push({word: '0000000000', count: i});
-    }
+  api.showSpiral = function(canvas, options) {
+   var width = canvas.width,
+      height = canvas.height,
+      gContext = canvas.getContext('2d'),
+      offsetX = width / 2,
+      offsetY = height / 2;
+    gContext.save();
 
-    api.create(words, canvas, options);
+    gContext.translate(offsetX, offsetY);
+    drawSpiral(2*width, 2*height, gContext, options.spiral || {});
+
+    gContext.restore();
   }
 
 
