@@ -275,12 +275,12 @@ var tagmob = (function() {
       var c = match[2].split(',');
       switch (match[1]) {
         case 'v':
-          oatX = atX,oatY = atY;
+          oatX = atX, oatY = atY;
           code[i] = { m: 'bezierCurveTo', a: [ atX + ~~c[0], atY + ~~c[1], atX + ~~c[2], atY + ~~c[3], atX += ~~c[4], atY += ~~c[5] ] };
           bbox = createMergedBbox(bbox, curveDim(oatX, oatY, code[i].a[0], code[i].a[1], code[i].a[2], code[i].a[3], code[i].a[4], code[i].a[5]));
           break;
         case 'r':
-          oatX = atX,oatY = atY;
+          oatX = atX, oatY = atY;
           code[i] = { m: 'lineTo', a: [ atX += ~~c[0], atY += ~~c[1] ] };
           bbox = {
             min_x: mmin(bbox.min_x, mmin(oatX, atX)), min_y: mmin(bbox.min_y, mmin(oatY, atY)),
@@ -368,32 +368,33 @@ var tagmob = (function() {
   function renderWord(word, g, color) {
     var chars = word.text,
       jumps = font.spacing(chars, 0, 0),
-      glyphs = font.glyphs, glyph, i = -1, j = -1, chr;
+      glyphs = font.glyphs, glyph, i = -1, j = -1, chr,
+      tx = word.tx+.5,
+      ty = word.ty+.5;
     g.save();
     if (word.rotate == 1) {
       g.rotate(-pi_half);
-      g.translate(-word.ty, word.tx);
+      g.translate(-ty, tx);
     } else if (word.rotate == -1) {
       g.rotate(pi_half);
-      g.translate(word.ty, -word.tx);
+      g.translate(ty, -tx);
     } else {
-      g.translate(word.tx, word.ty);
+      g.translate(tx, ty);
     }
-    g.scale(word.scale.toFixed(4), word.scale.toFixed(4));
-    g.beginPath();
+    g.scale(word.scale, word.scale);
     while (chr = chars[++i]) {
       glyph = glyphs[chars[i]] || font.missingGlyph;
       if (!glyph) continue;
       if (glyph.d) {
         if (glyph.code) {
+          g.beginPath();
           interpret(glyph.code, g);
         }
       }
       g.fillStyle = color || word.color || '#000000';
       g.fill();
-      g.translate(jumps[++j], 0);
+      g.translate(jumps[++j]+0.5, .0);
     }
-    g.closePath();
     g.restore();
   }
 
@@ -418,6 +419,7 @@ var tagmob = (function() {
   }
 
   function buildScalingFunction(minCount, maxCount, minScale, maxScale) {
+    if(maxCount == minCount) maxCount += 1;
     // simple linear distribution
     return function(count) {
       var m = (maxScale - minScale) / (maxCount - minCount);
@@ -460,11 +462,13 @@ var tagmob = (function() {
       maxCount = words[words.length - 1].count || defaults.maxCount,
       color = options.color || defaults.color,
       hoverColor = options.hoverColor,
+      selectColor = options.selectColor,
       unitToScale = buildScalingFunction(minCount, maxCount, maxScale, minScale),
       onSelect = options.onselect || function() {},
       onUnselect = options.onunselect || function() {},
       onMouseover = options.onmouseover || function() {},
       onMouseout = options.onmouseout || function() {},
+      scaleToFit = !options.dontScaleToFit,
       insets = options.insets || defaults.insets,
       paletteLength = options.palette ? options.palette.length : 0;
       globalBbox = {min_x: 1000000, min_y: 1000000, max_x: -1000000, max_y: -1000000};
@@ -477,9 +481,9 @@ var tagmob = (function() {
       scale = unitToScale(words[i].count);
 
       w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0, paletteLength > 0 ? options.palette[i % paletteLength] : color));
-      var xPos = parseInt(i > 0 ? (width / 4 - Math.random() * width / 2) : (w[i].bbox.min_x - w[i].bbox.max_x) / 2);
-      moveWord(w[i], xPos, w[i].rotate ? -(w[i].bbox.max_y - w[i].bbox.min_y) / 2 : 0);
-      if (i > 0) positionWord(w, i, width + 200, height + 200, gContext);
+      var xPos = parseInt(i > 0 ? (width / 4.0 - Math.random() * width / 2.0) : (w[i].bbox.min_x - w[i].bbox.max_x) / 2.0);
+      moveWord(w[i], xPos, w[i].rotate ? -(w[i].bbox.max_y - w[i].bbox.min_y) / 2.0 : 0);
+      if (i > 0) positionWord(w, i, width * 2, height * 2, gContext);
       mergeBboxes(globalBbox, w[i].bbox);
       if (options.drawBboxes) drawBboxes(w[i], gContext);
     }
@@ -487,7 +491,7 @@ var tagmob = (function() {
     var scaleTo = mmin(width/(globalBbox.max_x - globalBbox.min_x), height/(globalBbox.max_y - globalBbox.min_y));
 
     for (i = 0; i < words.length; i++) {
-      scaleWord(w[i], scaleTo);
+      if(scaleToFit) scaleWord(w[i], scaleTo);
       renderWord(w[i], gContext);
     }
 
@@ -543,7 +547,7 @@ var tagmob = (function() {
     };
 
     function mouseInHandler(word) {
-      if(hoverColor) renderWord(word, gContext, hoverColor);
+      if(hoverColor && !word.selected) renderWord(word, gContext, hoverColor);
       onMouseover(word);
     }
 
@@ -553,7 +557,7 @@ var tagmob = (function() {
     }
 
     function selectHandler(word) {
-      alert("" + word.text + " selected!");
+      if(selectColor) renderWord(word, gContext, selectColor);
       onSelect(word);
     }
 
@@ -581,6 +585,15 @@ var tagmob = (function() {
         count = count || (numItems - i);
         words.push({word: items[i].firstChild.data, count: count});
       }
+    }
+
+    api.create(words, canvas, options);
+  }
+
+  api.debug = function(canvas, options) {
+    var words = [];
+    for(var i=0; i<30; i++) {
+      words.push({word: '0000000000', count: i});
     }
 
     api.create(words, canvas, options);

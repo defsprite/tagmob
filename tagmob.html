@@ -6,24 +6,33 @@
   <script src="fonts/OldSansBlack_500.font.js" type="text/javascript"></script>
   <script type="text/javascript">
     $(function() {
-      var words = [];
-
-      $("#wordcloud li").each(function(index, elem) {
-        var e = $(elem);
-        words.push({word: e.text() , count: e.attr('data-count') });
-      }).hide();
-
-      var options = {
-        hoverColor: "#00FF00",
-        maxFontHeight: 200,
-        minFontHeight: 12
-      },
-      canvas = document.createElement('canvas')
+      var canvas = document.createElement('canvas');
       canvas.width = 800;
       canvas.height = 800;
       document.body.appendChild(canvas);
+
+
+      var words = [];
+      $("#wordcloud li").each(
+        function(index, elem) {
+          var e = $(elem);
+          words.push({word: e.text() , count: e.attr('data-count') });
+        }).hide();
+
+      var options = {
+        hoverColor: "#00FF00",
+        selectColor: "#FF0000",
+        maxFontHeight: 200,
+        minFontHeight: 12,
+        dontScaleToFit: false,
+        onselect: function(word) {
+          alert(word.text + " selected!");
+        }
+      };
+
       //tagmob.create(words, canvas, options);
       tagmob.createFromList('wordcloud', canvas, options);
+
     });
 
   </script>
