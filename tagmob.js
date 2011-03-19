@@ -301,7 +301,7 @@ var tagmob = (function() {
     return {code: code, bbox: bbox};
   }
 
-  function initializeWord(chars, scale, rotate, insets) {
+  function initializeWord(chars, scale, rotate, color, insets) {
     var bbox = {min_x: 99999, min_y: 99999, max_x: -99999, max_y: -99999},
       jumps = font.spacing(chars, 0, 0),
       glyphs = font.glyphs, t_bbox, glyph, i = -1, j = -1, chr,
@@ -337,6 +337,7 @@ var tagmob = (function() {
       bboxes: bboxes,
       scale: scale,
       rotate: rotate,
+      color: color || '#000000',
       tx: 0,
       ty: 0,
       _tx: 0,
@@ -388,7 +389,7 @@ var tagmob = (function() {
           interpret(glyph.code, g);
         }
       }
-      g.fillStyle = color+"";
+      g.fillStyle = color || word.color || '#000000';
       g.fill();
       g.translate(jumps[++j], 0);
     }
@@ -465,6 +466,7 @@ var tagmob = (function() {
       onMouseover = options.onmouseover || function() {},
       onMouseout = options.onmouseout || function() {},
       insets = options.insets || defaults.insets,
+      paletteLength = options.palette ? options.palette.length : 0;
       globalBbox = {min_x: 1000000, min_y: 1000000, max_x: -1000000, max_y: -1000000};
 
     w = [];
@@ -473,7 +475,8 @@ var tagmob = (function() {
     gContext.save();
     for (var i = 0; i < words.length; i++) {
       scale = unitToScale(words[i].count);
-      w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0));
+
+      w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0, paletteLength > 0 ? options.palette[i % paletteLength] : color));
       var xPos = parseInt(i > 0 ? (width / 4 - Math.random() * width / 2) : (w[i].bbox.min_x - w[i].bbox.max_x) / 2);
       moveWord(w[i], xPos, w[i].rotate ? -(w[i].bbox.max_y - w[i].bbox.min_y) / 2 : 0);
       if (i > 0) positionWord(w, i, width + 200, height + 200, gContext);
@@ -500,16 +503,26 @@ var tagmob = (function() {
       }
     };
 
-    canvas.onmousemove = function(event) {
-      var x = document.body.scrollLeft + document.documentElement.scrollLeft + event.clientX - canvas.offsetLeft - offsetX,
-        y = document.body.scrollTop + document.documentElement.scrollTop + event.clientY - canvas.offsetTop - offsetY;
+    canvas.onmousemove = function(e) {
+      var x, y;
+      if (e.pageX || e.pageY) {
+        x = e.pageX;
+        y = e.pageY;
+      } else {
+        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+      }
+      x -= canvas.offsetLeft+offsetX;
+      y -= canvas.offsetTop+offsetY;
+
+      outerLoop:
       for (var i = 0; i < w.length; i++) {
         var over = false;
 
         if(w[i].over) {
           if(pointInBbox(x, y, w[i].bbox)) {
             for (var j = 0; j < w[i].bboxes.length; j++) {
-              if (pointInBbox(x, y, w[i].bboxes[j])) continue;
+              if (pointInBbox(x, y, w[i].bboxes[j])) break outerLoop;
             }
           } else {
             mouseOutHandler(w[i]);
@@ -535,7 +548,7 @@ var tagmob = (function() {
     }
 
     function mouseOutHandler(word) {
-      if (!word.selected) renderWord(word, gContext, color);
+      if (!word.selected) renderWord(word, gContext);
       onMouseout(word);
     }
 
@@ -545,7 +558,7 @@ var tagmob = (function() {
     }
 
     function unselectHandler(word) {
-      renderWord(word, gContext, color);
+      renderWord(word, gContext);
       onUnselect(word);
     }
 
