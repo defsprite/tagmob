@@ -56,9 +56,10 @@ That's it. You should see a tagmob in your canvas element.
 If you don't like having a list and want to render the data differently, you can use pass a sorted array like this:
 
     var words = [
-      {word: 'foo', count: 200}
-      {word: 'bar', count: 100}
+      {word: 'foo', count: 200},
+      {word: 'bar', count: 100},
       ...
+      {word: 'boo', count:  10}
     ];
 
     tagmob.create(words, canvas);
@@ -66,17 +67,17 @@ If you don't like having a list and want to render the data differently, you can
 
 ## Options ##
 
-Both `create`and `createFromList` take an options hash as a third parameter:
+Both `tagmob.create`and `tagmob.createFromList` take an options hash as a third parameter:
 
     {
-      rotationProbability: 0.5, // rotation probability, defaults to height/width ratio
-      rotationOrientation: 'right', // 'left' or 'right' rotation
-      color: "#000000", // word color
-      hoverColor: "#00FF00", // mousehover color
-      selectColor: "#FF0000", // color for currently selected word
-      maxFontHeight: 200, // max font height in pixels
-      minFontHeight: 12, // min font height in pixels
-      dontScaleToFit: false, // if true, tagmob is NOT scaled afterwards to fit into width and height of the canvas.
+      rotationProbability: 0.5,       // rotation probability, defaults to height/width ratio
+      rotationOrientation: 'right',   // 'left' or 'right' rotation
+      color: "#000000",               // word color
+      hoverColor: "#00FF00",          // mousehover color
+      selectColor: "#FF0000",         // color for currently selected word
+      maxFontHeight: 200,             // max font height in pixels
+      minFontHeight: 12,              // min font height in pixels
+      dontScaleToFit: false,          // if true, tagmob is NOT scaled afterwards to fit into width and height of the canvas.
 
       // mouse callbacks
       onselect: function(word) {
@@ -90,5 +91,5 @@ Both `create`and `createFromList` take an options hash as a third parameter:
 
 ## TODO ##
 
-Lots of things to do. Comments, bug reports and pull requests welcome!
+Lots of things to do. Minifying etc. Comments, bug reports and pull requests welcome!
 
