@@ -7,6 +7,8 @@
 
 ## What? ##
 
+![A tagmob in action](http://github.com/defsprite/tagmob/raw/master/screenshot.gif)
+
 tagmob.js aims to mimic the functionality of the [Wordle Java-Applet][wordle] by
 [Jonathan Feinberg][feinberg] in a clickable and hoverable way using a pure javascript implementation. Fair enough.
 
