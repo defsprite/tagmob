@@ -57,8 +57,8 @@ That's it. You should see a tagmob inside a canvas element where you list was.
 
 ## Options ##
     {
-      width: 800                      // width of the created canvas element
-      height: 640                     // height of the created canvas element
+      width: 800,                     // width of the created canvas element
+      height: 640,                    // height of the created canvas element
       rotationProbability: 0.5,       // rotation probability, defaults to height/width ratio
       rotationOrientation: 'right',   // 'left' or 'right' rotation
       color: "#000000",               // standard word color, if not overriden by data-color
