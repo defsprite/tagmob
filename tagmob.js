@@ -44,7 +44,7 @@ var tagmob = (function() {
         '\u00ad': '\u2011'
       };
       for (key in fallbacks) {
-        if (!hasOwnProperty(fallbacks, key)) continue;
+        if (!fallbacks.hasOwnProperty(key)) continue;
         if (!glyphs[key]) glyphs[key] = glyphs[fallbacks[key]];
       }
       return glyphs;
@@ -296,7 +296,6 @@ var tagmob = (function() {
         case 'e':
           break generate;
       }
-      // context[code[i].m].apply(context, code[i].a);
     }
     return {code: code, bbox: bbox};
   }
@@ -348,20 +347,16 @@ var tagmob = (function() {
   function drawBboxes(word, g) {
     var box;
     g.save();
-    //g.beginPath();
-    //g.rect(-2, -2, 4, 4);
     g.fill();
     for (var b = word.bboxes.length; b--;) {
       g.save();
       box = word.bboxes[b];
       g.translate(word._tx, word._ty);
       g.rect(box.min_x, box.min_y, box.max_x - box.min_x, box.max_y - box.min_y);
-      //g.rect(word.bbox.min_x, word.bbox.min_y, word.bbox.max_x - word.bbox.min_x, word.bbox.max_y - word.bbox.min_y);
       g.stroke();
       g.restore();
     }
     g.stroke();
-    //g.closePath();
     g.restore();
   }
 
@@ -417,7 +412,7 @@ var tagmob = (function() {
       strokes++;
     }
     moveWord(words[index], tx + x, ty + y);
-    console.log("strokes: " + strokes);
+    // console.log("strokes: " + strokes);
   }
 
   function drawSpiral(w, h, g, opts) {
@@ -441,7 +436,7 @@ var tagmob = (function() {
       strokes++;
     }
     g.stroke();
-    console.log("strokes: " + strokes);
+    // console.log("strokes: " + strokes);
     g.restore();
   }
 
@@ -498,7 +493,7 @@ var tagmob = (function() {
       onUnselect = options.onunselect || function() {},
       onMouseover = options.onmouseover || function() {},
       onMouseout = options.onmouseout || function() {},
-      scaleToFit = !options.dontScaleToFit,
+      scaleToFit = options.scaleToFit == undefined ? true : options.scaleToFit,
       spiralOptions = options.spiral || defaults.spiral;
       insets = options.insets || defaults.insets,
       paletteLength = options.palette ? options.palette.length : 0;
@@ -510,8 +505,8 @@ var tagmob = (function() {
     gContext.save();
     for (var i = 0; i < words.length; i++) {
       scale = unitToScale(words[i].count);
-
-      w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0, paletteLength > 0 ? options.palette[i % paletteLength] : color));
+      var word_color = words[i].color || (paletteLength > 0 ? options.palette[i % paletteLength] : color);
+      w.push(initializeWord(words[i].word, scale, Math.random() < rProb ? rOrient : 0, word_color));
       var xPos = parseInt(i > 0 ? (width / 4.0 - Math.random() * width / 2.0) : (w[i].bbox.min_x - w[i].bbox.max_x) / 2.0);
       moveWord(w[i], xPos, w[i].rotate ? -(w[i].bbox.max_y - w[i].bbox.min_y) / 2.0 : 0);
       if (i > 0) positionWord(w, i, width * 2, height * 2, gContext, spiralOptions);
@@ -600,8 +595,8 @@ var tagmob = (function() {
     return canvas;
   },
 
-  api.createFromList = function(element, canvas, options) {
-    var e, items, numItems, count, words = [];
+  api.createFromList = function(element, options) {
+    var e, items, numItems, count, wordcolor, words = [], options = options || {};
     if (typeof element == 'string') {
       e = document.getElementById(element);
     } else {
@@ -613,13 +608,27 @@ var tagmob = (function() {
       numItems = items.length;
       for(var i = 0; i<numItems; i++) {
         count = items[i].getAttribute('data-count');
+        wordcolor = items[i].getAttribute('data-color');
         count = count || (numItems - i);
-        words.push({word: items[i].firstChild.data, count: count});
+        words.push({word: items[i].firstChild.data, count: count, color: wordcolor});
       }
     }
 
+    var canvas = document.createElement("canvas");
+    if (options.width) canvas.width = options.width;
+    if (options.height) canvas.height = options.width;
+    canvas.className = options.className || "tagmob-canvas";
+
+    e.parentNode.insertBefore(canvas, e);
+    e.parentNode.removeChild(e);
+
     api.create(words, canvas, options);
-  }
+  },
+
+  api.replaceList = function(element, width, height, options) {
+
+
+  },
 
   api.showSpiral = function(canvas, options) {
    var width = canvas.width,
@@ -633,7 +642,7 @@ var tagmob = (function() {
     drawSpiral(2*width, 2*height, gContext, options.spiral || {});
 
     gContext.restore();
-  }
+  };
 
 
 
