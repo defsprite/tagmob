@@ -28,7 +28,7 @@ You can see tagmob.js working inside a small webapp [here][heroku] or in the tag
 To create a tagmob, you basically need two things:
 
   * A list containing your tags.
-  * At least one cufon font registered after loading tagmob.js (I have provided a free Helvetica style font by Manfred Klein for your convenience).
+  * At least one [Cufón][cufon] font registered after loading tagmob.js (I have provided a free Helvetica style font by Manfred Klein for your convenience).
 
 The list should provide words directly inside the `<li>`elements and a `data-count` attribute, sorted in descending order:
 
