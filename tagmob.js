@@ -616,18 +616,19 @@ var tagmob = (function() {
 
     var canvas = document.createElement("canvas");
     if (options.width) canvas.width = options.width;
-    if (options.height) canvas.height = options.width;
+    if (options.height) canvas.height = options.height;
     canvas.className = options.className || "tagmob-canvas";
 
     e.parentNode.insertBefore(canvas, e);
     e.parentNode.removeChild(e);
 
     api.create(words, canvas, options);
-  },
 
-  api.replaceList = function(element, width, height, options) {
-
-
+    return function() {
+      canvas.width = options.width;
+      canvas.height = options.height;
+      api.create(words, canvas, options);
+    }
   },
 
   api.showSpiral = function(canvas, options) {

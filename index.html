@@ -2,141 +2,241 @@
 <head>
   <title>tagmob.js example page</title>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+  <script src="js/jquery-ui-1.8.13.custom.min.js" type="text/javascript"></script>
   <script src="tagmob.js" type="text/javascript"></script>
   <script src="fonts/OldSansBlack_500.font.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href=" css/ui-darkness/jquery-ui-1.8.13.custom.css" />
   <style type="text/css">
     .example {
-      margin-left: auto;
-      margin-right: auto;
-      width: 800px;
+      overflow: hidden;
+      clear:both;
+    }
+
+    #font {
+      width: 300px; float:left; margin-top: 13px; margin-bottom: 10px;
+    }
+
+    #palettes {
+      margin-bottom: 10px;
+    }
+
+    .button {
+      float:left; margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    #vslider {
+      height: 1200px;
+      float: left;
+      margin: 5px;
+    }
+
+    #hslider {
+      width: 1200px;
+      margin: 5px;
+    }
+
+    .tagmob-canvas {
+      float: left;
+      border: 1px solid black;
     }
   </style>
 </head>
 <body>
+<div id="palettes">
+    <input type="radio" name="radio" id="palette0" value='["#A82221", "#DB5E31", "#EDA23E", "#F2CB67", "#BFB840"]' checked="true"/><label for="palette0">Yes you can</label>
+    <input type="radio" name="radio" id="palette1" value='["#649670", "#36291E", "#69AD6C", "#92E57C", "#C5FF84"]'/><label for="palette1">Mint chocolate</label>
+    <input type="radio" name="radio" id="palette2" value='["#302C29", "#D1D1BC", "#A7C4BB", "#6C8C84", "#466964"]'/><label for="palette2">Crying in the rain</label>
+    <input type="radio" name="radio" id="palette3" value='["#010712", "#13171F", "#1C1F26", "#24262D", "#961227"]'/><label for="palette3">Black swan</label>
+    <input type="radio" name="radio" id="palette4" value='["#FFB300", "#D18111", "#945626", "#523829", "#574C3C"]'/><label for="palette4">Orangie brownie</label>
+    <input type="radio" name="radio" id="palette5" value='["#E55322", "#D19552", "#B8BF73", "#B6DB83", "#FFF991"]'/><label for="palette5">Philosophy</label>
+    <input type="radio" name="radio" id="palette6" value='["#2F3540", "#666A73", "#F2EDE4", "#D9D1C7", "#8C8681"]'/><label for="palette6">Greyish</label>
+  </div>
+<div id="font"></div>
+<div class="button">
+  <input type="checkbox" id="scale" />
+  <label for="scale">Scale to fit</label>
+</div>
 <div class="example">
-  <ol id="wordcloud">
-    <li data-count="150">Ruby</li>
-    <li data-count="130">Rails</li>
-    <li data-count="90" data-color="#00FFFF">user</li>
-    <li data-count="80">restart</li>
-    <li data-count="80">latestrelease</li>
-    <li data-count="80">nfs</li>
-    <li data-count="80">ln</li>
-    <li data-count="80">currentpath</li>
-    <li data-count="60">runwithresult</li>
-    <li data-count="60">app</li>
-    <li data-count="60">res</li>
-    <li data-count="60">repositorycache</li>
-    <li data-count="60">usergroup</li>
-    <li data-count="40">bundle</li>
-    <li data-count="40">symlink</li>
-    <li data-count="40">||</li>
-    <li data-count="40">rm</li>
-    <li data-count="40">node</li>
-    <li data-count="40">releasetolink</li>
-    <li data-count="30">mkdir</li>
-    <li data-count="30">RAILSENV</li>
-    <li data-count="30">deployto</li>
-    <li data-count="30">chown</li>
-    <li data-count="30">runwithresultchown</li>
-    <li data-count="30">migrate</li>
-    <li data-count="30">releasepath</li>
-    <li data-count="30">deploy</li>
-    <li data-count="30">runwithresultcd</li>
-    <li data-count="30">MERBENV</li>
-    <li data-count="30">RACKENV</li>
-    <li data-count="20">lrpt</li>
-    <li data-count="20">releasetolinklog</li>
-    <li data-count="20">releasepath</li>
-    <li data-count="20">cmds</li>
-    <li data-count="20">release</li>
-    <li data-count="20">false</li>
-    <li data-count="20">nmigrationcommand</li>
-    <li data-count="20">gem</li>
-    <li data-count="20">excludegit</li>
-    <li data-count="20">revision</li>
-    <li data-count="10">class</li>
-    <li data-count="10">sudo</li>
-    <li data-count="10">releasetolinkpublicsystem</li>
-    <li data-count="10">rsync</li>
-    <li data-count="10">cmd</li>
-    <li data-count="10">40</li>
-    <li data-count="10">optsmigrationcommand</li>
-    <li data-count="10">raiseEyDeployFailure</li>
-    <li data-count="10">rf</li>
-    <li data-count="10">require</li>
-    <li data-count="7">authorization</li>
-    <li data-count="6">access</li>
-    <li data-count="5">users</li>
-    <li data-count="4">roles</li>
-    <li data-count="4">plugin</li>
-    <li data-count="4">plugins</li>
-    <li data-count="3">complex</li>
-    <li data-count="3">rules</li>
-    <li data-count="3">requirements</li>
-    <li data-count="3">object</li>
-    <li data-count="2">restricting</li>
-    <li data-count="2">options</li>
-    <li data-count="2">user</li>
-    <li data-count="2">won't</li>
-    <li data-count="2">role</li>
-    <li data-count="2">control</li>
-    <li data-count="2">lists</li>
-    <li data-count="2">complexity</li>
-    <li data-count="2">helps</li>
-    <li data-count="2">solution</li>
-    <li data-count="2">contrast</li>
-    <li data-count="2">roughly</li>
-    <li data-count="2">simple</li>
-    <li data-count="2">Privileges</li>
-    <li data-count="2">Rails</li>
-    <li data-count="2">declarative</li>
-    <li data-count="2">common</li>
-    <li data-count="1">abstraction</li>
-    <li data-count="1">ACL</li>
-    <li data-count="1">overview</li>
-    <li data-count="1">allowed</li>
-    <li data-count="1">authentication</li>
-    <li data-count="1">modified</li>
-    <li data-count="1">define</li>
-    <li data-count="1">missing</li>
-    <li data-count="1">views</li>
-    <li data-count="1">project</li>
-    <li data-count="1">list</li>
-    <li data-count="1">view</li>
-    <li data-count="1">difficult</li>
-    <li data-count="1">table</li>
-    <li data-count="1">multiple</li>
-    <li data-count="1">examine</li>
-    <li data-count="1">size</li>
-    <li data-count="1">I'm</li>
-    <li data-count="1">grant</li>
-    <li data-count="1">local</li>
-    <li data-count="1">objects</li>
-    <li data-count="1">developer's</li>
-    <li data-count="1">rolerequirement</li>
-    <li data-count="1">enforced</li>
-  </ol>
-  <script type="text/javascript">
+  <div id="hslider"></div>
+  <div id="vslider"></div>
+  <ol id="wordcloud" style="display:none;">
+      <li data-count="90">Tag</li>
+      <li data-count="41">cloud</li>
+      <li data-count="28">tags</li>
+      <li data-count="17">clouds</li>
+      <li data-count="15">size</li>
+      <li data-count="11">word</li>
+      <li data-count="10">font</li>
+      <li data-count="8">Data</li>
+      <li data-count="7">Search</li>
+      <li data-count="6">type</li>
+      <li data-count="6">Text</li>
+      <li data-count="6">items</li>
+      <li data-count="6">weighted</li>
+      <li data-count="5">Web</li>
+      <li data-count="5">visual</li>
+      <li data-count="4">words</li>
+      <li data-count="4">Flickr</li>
+      <li data-count="4">frequency</li>
+      <li data-count="4">color</li>
+      <li data-count="4">user</li>
+      <li data-count="4">engine</li>
+      <li data-count="4">keyword</li>
+      <li data-count="3">Collocate</li>
+      <li data-count="3">appearance</li>
+      <li data-count="3">list</li>
+      <li data-count="3">popularity</li>
+      <li data-count="3">address</li>
+      <li data-count="3">President</li>
+      <li data-count="3">website</li>
+      <li data-count="3">created</li>
+      <li data-count="3">display</li>
+      <li data-count="3">site</li>
+      <li data-count="3">attention</li>
+      <li data-count="3">term</li>
+      <li data-count="3">results</li>
+      <li data-count="3">larger</li>
+      <li data-count="2">properties</li>
+      <li data-count="2">layout</li>
+      <li data-count="2">similar</li>
+      <li data-count="2">applied</li>
+      <li data-count="2">categories</li>
+      <li data-count="2">specific</li>
+      <li data-count="2">weight</li>
+      <li data-count="2">influenced</li>
+      <li data-count="2">technique</li>
+      <li data-count="2">alphabetically</li>
+      <li data-count="2">descriptor</li>
+      <li data-count="2">sites</li>
+      <li data-count="2">frequencies</li>
+      <li data-count="2">tmin</li>
+      <li data-count="2">represents</li>
+      <li data-count="2">effect</li>
+      <li data-count="2">representation</li>
+      <li data-count="2">values</li>
+      <li data-count="2">attributed</li>
+      <li data-count="2">SEM</li>
+      <li data-count="2">based</li>
+      <li data-count="2">Searching</li>
+      <li data-count="2">single</li>
+      <li data-count="2">users</li>
+      <li data-count="2">alphabetical</li>
+      <li data-count="2">ti</li>
+      <li data-count="2">simply</li>
+      <li data-count="2">Technorati</li>
+      <li data-count="2">visualization</li>
+      <li data-count="2">population</li>
+      <li data-count="2">importance</li>
+      <li data-count="2">pages</li>
+      <li data-count="2">max</li>
+      <li data-count="2">represent</li>
+      <li data-count="2">countries</li>
+      <li data-count="2">refers</li>
+      <li data-count="2">free</li>
+      <li data-count="2">represented</li>
+      <li data-count="2">item</li>
+      <li data-count="2">stock</li>
+      <li data-count="2">typically</li>
+      <li data-count="2">include</li>
+      <li data-count="2">attract</li>
+      <li data-count="2">document</li>
+      <li data-count="2">Union</li>
+      <li data-count="2">relevant</li>
+      <li data-count="2">Examples</li>
+      <li data-count="2">cluster</li>
+      <li data-count="1">Stewart</li>
+      <li data-count="1">crawled</li>
+      <li data-count="1">world</li>
+      <li data-count="1">Douglas</li>
+      <li data-count="1">collection</li>
+      <li data-count="1">logarithmic</li>
+      <li data-count="1">speech</li>
+      <li data-count="1">Google</li>
+      <li data-count="1">claimed</li>
+      <li data-count="1">advertising</li>
+      <li data-count="1">tags13editData</li>
+      <li data-count="1">blog</li>
+      <li data-count="1">provide</li>
+      <li data-count="1">suboptimal</li>
+      <li data-count="1">means</li>
+      <li data-count="1">explore</li>
+      <li data-count="1">marketing</li>
+</ol>
 
+  <script type="text/javascript">
     var options = {
       width: 800,
-      height: 640,
-      hoverColor: "#00FF00",
+      height: 600,
+      //hoverColor: "#00FF00",
       selectColor: "#FF0000",
       maxFontHeight: 200,
-      minFontHeight: 12,
+      minFontHeight: 15,
       scaleToFit: true,
-      onselect: function(word) {
-        alert(word.text + " selected!");
-      }
+      palette: ["#A82221", "#DB5E31", "#EDA23E", "#F2CB67", "#BFB840"]
+
     };
 
-    list = document.getElementById("wordcloud");
-    tagmob.createFromList(list, options);
+    var list = document.getElementById("wordcloud");
+    redraw = tagmob.createFromList(list, options);
 
 
   </script>
+
+  <script type="text/javascript">
+    // Slider
+    $('#font').slider({
+      range: true,
+      values: [15, 200]
+    }).bind("slidechange", function(event, ui) {
+      options['minFontHeight']=$(this).slider('values', 0);
+      options['maxFontHeight']=$(this).slider('values', 1);
+      redraw();
+    });
+
+    $("#scale").button().bind("click", function(e) {
+      options.scaleToFit = this.checked;
+      redraw();
+    });
+
+    $("#palettes").buttonset();
+
+    $("#palettes input").each(function(i, b) {
+      $(b).bind("click", function(event) {
+        options['palette'] = eval(this.value);
+        redraw();
+      });
+    });
+
+
+    $("#vslider").slider({
+        orientation: "vertical",
+        range: "max",
+        min: 100,
+        max: 1200,
+        value: 600,
+        change: function(e, ui) {
+          options.height = 1200 - ui.value;
+          redraw();
+        }
+
+    });
+
+    $("#hslider").slider({
+        orientation: "horizontal",
+        range: "min",
+        min: 100,
+        max: 1200,
+        value: 800,
+        change: function(e, ui) {
+          options.width = ui.value;
+          redraw();
+        }
+
+    });
+
+  </script>
+
 </div>
 </body>
 </html>
