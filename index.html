@@ -26,13 +26,13 @@
     }
 
     #vslider {
-      height: 1200px;
+      height: 1000px;
       float: left;
       margin: 5px;
     }
 
     #hslider {
-      width: 1200px;
+      width: 1000px;
       margin: 5px;
     }
 
@@ -172,7 +172,7 @@
       selectColor: "#FF0000",
       maxFontHeight: 200,
       minFontHeight: 15,
-      scaleToFit: true,
+      scaleToFit: false,
       palette: ["#A82221", "#DB5E31", "#EDA23E", "#F2CB67", "#BFB840"]
 
     };
@@ -187,7 +187,9 @@
     // Slider
     $('#font').slider({
       range: true,
-      values: [15, 200]
+      values: [15, 200],
+      max: 300,
+      min: 2
     }).bind("slidechange", function(event, ui) {
       options['minFontHeight']=$(this).slider('values', 0);
       options['maxFontHeight']=$(this).slider('values', 1);
@@ -213,10 +215,10 @@
         orientation: "vertical",
         range: "max",
         min: 100,
-        max: 1200,
+        max: 1000,
         value: 600,
         change: function(e, ui) {
-          options.height = 1200 - ui.value;
+          options.height = 1000 - ui.value;
           redraw();
         }
 
@@ -226,7 +228,7 @@
         orientation: "horizontal",
         range: "min",
         min: 100,
-        max: 1200,
+        max: 1000,
         value: 800,
         change: function(e, ui) {
           options.width = ui.value;

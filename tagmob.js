@@ -367,6 +367,7 @@ var tagmob = (function() {
       tx = word.tx+.5,
       ty = word.ty+.5;
     g.save();
+    g.beginPath();
     if (word.rotate == 1) {
       g.rotate(-pi_half);
       g.translate(-ty, tx);
@@ -583,7 +584,10 @@ var tagmob = (function() {
     }
 
     function selectHandler(word) {
-      if(selectColor) renderWord(word, gContext, selectColor);
+      if(selectColor) {
+
+        renderWord(word, gContext, selectColor);
+      }
       onSelect(word);
     }
 
